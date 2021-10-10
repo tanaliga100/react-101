@@ -1,24 +1,66 @@
-import logo from './logo.svg';
-import './App.css';
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+import Header from './components/Header'
+import Tasks from './components/Tasks'
+import AddTask from './components/AddTask'
+import Button from './components/Button'
+import {useState} from 'react'
 
 function App() {
+  const [showForm, setShowForm] = useState(false)
+  const [tasks, setTasks] = useState([
+    {
+      id: 1,
+      title: "Attend Scrum !",
+      author: "Jordan",
+      reminder: true
+    },
+    {
+      id: 2,
+      title: "Jam with Friends",
+      author: "Wong",
+      reminder: false
+    },
+    {
+      id: 3,
+      title: "Watched Deanna Wong",
+      author: "Martin",
+      reminder: true
+    }
+  ])
+
+  // addTask 
+  const addTask = (task) => {
+    const id = Math.floor(Math.random() * 1000)
+   const newTask = {...task, id}
+   setTasks([...tasks, newTask])
+
+  }
+  // Delete Task
+  const deleteTask = (id) => {
+    setTasks(tasks.filter(task => task.id !== id))
+    return tasks;
+  }
+  // toogleReminder 
+  const toggleReminder = (id) => {
+     setTasks(
+       tasks.map(task => task.id === id ? {...task, reminder: !task.reminder}: task)
+     )
+  }
+  // showForm 
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <Router>
+    <div >
+          <Header />
+          <Route>
+          <div className="">
+          <Button onShow={()=> setShowForm(!showForm)} color="teal" text="Add" propsshowForm={showForm} />
+          {showForm && <AddTask onAdd={addTask} />}
+          { tasks.length > 0 ? <Tasks tasks={tasks} onDelete={deleteTask} onToggle={toggleReminder} /> : ` Nothing to Show...`}
+          </div>
+          </Route>
     </div>
+    </Router>
   );
 }
 
